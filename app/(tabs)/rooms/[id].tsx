@@ -2,7 +2,8 @@
 import React from 'react';
 import { View, Text, FlatList, TextInput, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { PaperPlaneRight } from 'phosphor-react-native';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { ArrowLeft, PaperPlaneRight } from 'phosphor-react-native';
 
 interface Message {
   id: string;
@@ -14,20 +15,29 @@ interface Message {
 const mockMessages: Message[] = [
   {
     id: '1',
-    user: 'Sarah Chen',
-    message: 'Hey everyone! Just passed my first exam 🎉',
+    user: 'Alex Johnson',
+    message: 'Anyone have notes from the contract law section?',
     timestamp: new Date(),
   },
   {
     id: '2',
-    user: 'Mike Rodriguez',
-    message: 'Congrats! Which topic was the most challenging?',
+    user: 'Emma Davis',
+    message: 'I can share mine! DM me your email',
     timestamp: new Date(),
   },
 ];
 
-export default function MainHallScreen() {
+export default function RoomChatScreen() {
+  const { id } = useLocalSearchParams();
+  const router = useRouter();
   const [message, setMessage] = React.useState('');
+
+  const sendMessage = () => {
+    if (message.trim()) {
+      console.log('Sending message to room:', id, message);
+      setMessage('');
+    }
+  };
 
   const renderMessage = ({ item }: { item: Message }) => (
     <View className="mb-4 px-6">
@@ -42,23 +52,20 @@ export default function MainHallScreen() {
     </View>
   );
 
-  const sendMessage = () => {
-    if (message.trim()) {
-      // TODO: Implement message sending with Supabase
-      console.log('Sending message:', message);
-      setMessage('');
-    }
-  };
-
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <View className="px-6 py-4 border-b border-separator">
-        <Text className="text-2xl font-poppins-semibold text-black">
-          Main Hall
-        </Text>
-        <Text className="text-sm font-poppins-light text-black mt-1">
-          General discussion for all students
-        </Text>
+      <View className="px-6 py-4 border-b border-separator flex-row items-center">
+        <TouchableOpacity onPress={() => router.back()} className="mr-4">
+          <ArrowLeft size={24} color="#000000" weight="thin" />
+        </TouchableOpacity>
+        <View className="flex-1">
+          <Text className="text-xl font-poppins-semibold text-black">
+            Room {id}
+          </Text>
+          <Text className="text-sm font-poppins-light text-black">
+            24 members active
+          </Text>
+        </View>
       </View>
 
       <FlatList
