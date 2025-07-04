@@ -1,0 +1,61 @@
+I need to create a React Native (Expo) chat application for real estate students with the following specifications:
+Project Requirements:
+
+Platform: React Native with Expo (latest stable version)
+Backend: Supabase for authentication, real-time chat, and database
+Styling: NativeWind (Tailwind CSS for React Native)
+Navigation: Expo Router with file-based routing
+State Management: Zustand for global state
+Data Fetching: TanStack Query (React Query)
+Icons: Phosphor React Native icons
+AI Integration: OpenAI with RAG system for course documents
+
+Key Features to Implement:
+
+Magic-link authentication (passwordless email login)
+Bottom tab navigation: Main Hall • Rooms • AI Assistant • Profile
+Real-time chat with Supabase realtime subscriptions
+AI assistant with context-aware responses about course content
+User profiles with avatars, bio, location
+Multiple chat rooms for different topics/cohorts
+
+Design System:
+
+Colors: Black (#000000) and white (#FFFFFF) primary, with #F5F5F5 for separators
+Typography: Poppins font family, weights 300-600
+Spacing: 4-point grid system with generous 24px padding
+Icons: Thin stroke (1.5-2pt) to match minimalist aesthetic
+
+File Structure to Create:
+app/
+├── (auth)/
+│   └── index.tsx          # Email login screen
+├── (tabs)/
+│   ├── _layout.tsx        # Tab navigation layout
+│   ├── index.tsx          # Main Hall chat
+│   ├── rooms/
+│   │   ├── index.tsx      # Room list
+│   │   └── [id].tsx       # Individual room chat
+│   ├── ai.tsx             # AI assistant chat
+│   └── profile.tsx        # User profile
+├── _layout.tsx            # Root layout
+└── +not-found.tsx         # 404 page
+Initial Tasks:
+
+Set up Expo project with TypeScript
+Configure NativeWind/Tailwind
+Install and configure Supabase client
+Set up basic file-based routing structure
+Create the authentication flow with magic-link
+Implement basic chat UI components
+
+Please help me:
+
+Initialize the project with all necessary dependencies
+Set up the project structure with proper file organization
+Configure the development environment for hot reloading
+Create the basic app shell with navigation and routing
+
+Start with the project initialization and dependency installation. I'll provide the Supabase configuration details once the base project is set up.
+
+This prompt should give you a solid foundation to start building the production-ready version of your REI Connect app with all the proper architecture and tooling in place.RetryClaude does not have the ability to run the code it generates yet.Claude can make mistakes. Please double-check responses. Sonnet 4
