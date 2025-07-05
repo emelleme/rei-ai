@@ -1,101 +1,119 @@
 
 import React from 'react';
-import { FlatList } from 'react-native';
+import { FlatList, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { View, Text, Card, TextField, Button } from 'react-native-ui-lib';
-import { PaperPlaneRight, Robot } from 'phosphor-react-native';
-
-interface AIMessage {
-  id: string;
-  type: 'user' | 'ai';
-  message: string;
-  timestamp: Date;
-}
-
-const mockMessages: AIMessage[] = [
-  {
-    id: '1',
-    type: 'ai',
-    message: 'Hello! I\'m your real estate study assistant. Ask me anything about property law, market analysis, or exam prep!',
-    timestamp: new Date(),
-  },
-  {
-    id: '2',
-    type: 'user',
-    message: 'What are the key factors in property valuation?',
-    timestamp: new Date(),
-  },
-  {
-    id: '3',
-    type: 'ai',
-    message: 'Great question! The three main approaches to property valuation are:\n\n1. **Comparative Market Analysis (CMA)** - Comparing similar properties\n2. **Income Approach** - Based on rental income potential\n3. **Cost Approach** - Replacement cost minus depreciation\n\nEach method has its place depending on property type and market conditions.',
-    timestamp: new Date(),
-  },
-];
+import { PaperPlaneRight, Robot, Sparkle } from 'phosphor-react-native';
+import { useAIStore, AIMessage } from '../../store/ai';
+import { geminiService } from '../../lib/services/gemini';
 
 export default function AIAssistantScreen() {
   const [message, setMessage] = React.useState('');
+  const { messages, isLoading, error, addMessage, setLoading, setError } = useAIStore();
+
+  const sendMessage = async () => {
+    if (message.trim() && !isLoading) {
+      const userMessage = message.trim();
+      setMessage('');
+      
+      // Add user message
+      addMessage({
+        role: 'user',
+        content: userMessage,
+      });
+
+      setLoading(true);
+      setError(null);
+
+      try {
+        // Convert messages to Gemini format
+        const conversationHistory = messages.slice(1).map(msg => ({
+          role: msg.role === 'assistant' ? 'model' as const : 'user' as const,
+          parts: msg.content,
+        }));
+
+        const response = await geminiService.generateResponse(userMessage, conversationHistory);
+        
+        // Add AI response
+        addMessage({
+          role: 'assistant',
+          content: response,
+        });
+      } catch (error) {
+        console.error('Error sending message:', error);
+        setError('Failed to get response from REI Mentor. Please try again.');
+        Alert.alert('Error', 'Failed to get response from REI Mentor. Please try again.');
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
 
   const renderMessage = ({ item }: { item: AIMessage }) => (
     <View marginH-page marginB-card>
-      <View row={item.type === 'user'} right={item.type === 'user'}>
+      <View row={item.role === 'user'} right={item.role === 'user'}>
         <Card 
           padding-card 
-          backgroundColor={item.type === 'user' ? 'primary' : 'surface'}
+          backgroundColor={item.role === 'user' ? 'primary' : 'surface'}
           style={{ 
             borderRadius: 12,
-            maxWidth: '80%',
-            marginLeft: item.type === 'user' ? '20%' : 0,
+            maxWidth: '85%',
+            marginLeft: item.role === 'user' ? '15%' : 0,
           }}
         >
-          {item.type === 'ai' && (
+          {item.role === 'assistant' && (
             <View row centerV marginB-section>
-              <Robot size={16} color="#000000" weight="thin" />
+              <Sparkle size={16} color="#000000" weight="thin" />
               <Text caption color-textPrimary marginL-section>
-                AI Assistant
+                REI Mentor
               </Text>
             </View>
           )}
           <Text 
             body 
-            color={item.type === 'user' ? 'secondary' : 'textPrimary'}
+            color={item.role === 'user' ? 'secondary' : 'textPrimary'}
+            style={{ lineHeight: 22 }}
           >
-            {item.message}
+            {item.content}
           </Text>
         </Card>
       </View>
     </View>
   );
 
-  const sendMessage = () => {
-    if (message.trim()) {
-      console.log('Sending AI message:', message);
-      setMessage('');
-    }
-  };
-
   return (
     <SafeAreaView className="flex-1 bg-white">
       <View paddingH-page paddingV-card style={{ borderBottomWidth: 1, borderBottomColor: '#F5F5F5' }}>
         <View row centerV marginB-section>
-          <Robot size={24} color="#000000" weight="thin" />
+          <Sparkle size={24} color="#000000" weight="thin" />
           <Text heading color-textPrimary marginL-card>
-            AI Assistant
+            Ask D'
           </Text>
         </View>
         <Text caption color-textSecondary>
-          Your personal real estate study companion
+          Your Socratic learning mentor by Darrell Dorsey
         </Text>
       </View>
 
       <FlatList
-        data={mockMessages}
+        data={messages}
         renderItem={renderMessage}
         keyExtractor={(item) => item.id}
         className="flex-1"
         contentContainerStyle={{ paddingTop: 16 }}
         showsVerticalScrollIndicator={false}
       />
+
+      {isLoading && (
+        <View paddingH-page marginB-section>
+          <View row centerV>
+            <Sparkle size={16} color="#666666" weight="thin" />
+            <Text caption color-textSecondary marginL-section>
+              REI Mentor is thinking...
+            </Text>
+          </View>
+        </View>
+      )}
 
       <View 
         paddingH-page 
@@ -108,23 +126,28 @@ export default function AIAssistantScreen() {
             value={message}
             onChangeText={setMessage}
             multiline
+            editable={!isLoading}
             style={{ 
               flex: 1,
-              backgroundColor: '#F5F5F5',
+              backgroundColor: isLoading ? '#F9F9F9' : '#F5F5F5',
               borderRadius: 12,
               paddingHorizontal: 16,
               paddingVertical: 12,
               fontSize: 16,
               fontFamily: 'Poppins-Regular',
+              opacity: isLoading ? 0.6 : 1,
             }}
             fieldStyle={{ borderWidth: 0 }}
+            onSubmitEditing={sendMessage}
           />
           <Button
             onPress={sendMessage}
             marginL-card
+            disabled={isLoading || !message.trim()}
             style={{ 
               backgroundColor: 'transparent',
               padding: 8,
+              opacity: (isLoading || !message.trim()) ? 0.4 : 1,
             }}
           >
             <PaperPlaneRight size={24} color="#000000" weight="thin" />
