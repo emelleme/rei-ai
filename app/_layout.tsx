@@ -1,12 +1,14 @@
-
-import '../global.css';
 import 'react-native-url-polyfill/auto';
 import 'react-native-get-random-values';
+import '../global.css';
+import '../lib/ui-config';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useAuthStore } from '@/store/auth';
+import { useEffect } from 'react';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/useColorScheme';

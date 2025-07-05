@@ -1,7 +1,8 @@
 
 import React from 'react';
-import { View, Text, FlatList, TextInput, TouchableOpacity } from 'react-native';
+import { FlatList } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { View, Text, Card, TextField, Button } from 'react-native-ui-lib';
 import { PaperPlaneRight } from 'phosphor-react-native';
 
 interface Message {
@@ -30,21 +31,24 @@ export default function MainHallScreen() {
   const [message, setMessage] = React.useState('');
 
   const renderMessage = ({ item }: { item: Message }) => (
-    <View className="mb-4 px-6">
-      <View className="bg-separator rounded-lg p-4">
-        <Text className="font-poppins-medium text-black text-sm mb-1">
+    <View marginH-page marginB-card>
+      <Card 
+        padding-card 
+        backgroundColor-surface
+        style={{ borderRadius: 12 }}
+      >
+        <Text subheading color-textPrimary marginB-section>
           {item.user}
         </Text>
-        <Text className="font-poppins-regular text-black text-base">
+        <Text body color-textPrimary>
           {item.message}
         </Text>
-      </View>
+      </Card>
     </View>
   );
 
   const sendMessage = () => {
     if (message.trim()) {
-      // TODO: Implement message sending with Supabase
       console.log('Sending message:', message);
       setMessage('');
     }
@@ -52,11 +56,11 @@ export default function MainHallScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <View className="px-6 py-4 border-b border-separator">
-        <Text className="text-2xl font-poppins-semibold text-black">
+      <View paddingH-page paddingV-card style={{ borderBottomWidth: 1, borderBottomColor: '#F5F5F5' }}>
+        <Text heading color-textPrimary>
           Main Hall
         </Text>
-        <Text className="text-sm font-poppins-light text-black mt-1">
+        <Text caption color-textSecondary marginT-section>
           General discussion for all students
         </Text>
       </View>
@@ -67,20 +71,41 @@ export default function MainHallScreen() {
         keyExtractor={(item) => item.id}
         className="flex-1"
         contentContainerStyle={{ paddingTop: 16 }}
+        showsVerticalScrollIndicator={false}
       />
 
-      <View className="px-6 py-4 border-t border-separator">
-        <View className="flex-row items-center bg-separator rounded-lg px-4 py-2">
-          <TextInput
-            className="flex-1 font-poppins-regular text-base"
+      <View 
+        paddingH-page 
+        paddingV-card 
+        style={{ borderTopWidth: 1, borderTopColor: '#F5F5F5' }}
+      >
+        <View row centerV>
+          <TextField
             placeholder="Type a message..."
             value={message}
             onChangeText={setMessage}
             multiline
+            style={{ 
+              flex: 1,
+              backgroundColor: '#F5F5F5',
+              borderRadius: 12,
+              paddingHorizontal: 16,
+              paddingVertical: 12,
+              fontSize: 16,
+              fontFamily: 'Poppins-Regular',
+            }}
+            fieldStyle={{ borderWidth: 0 }}
           />
-          <TouchableOpacity onPress={sendMessage} className="ml-3">
+          <Button
+            onPress={sendMessage}
+            marginL-card
+            style={{ 
+              backgroundColor: 'transparent',
+              padding: 8,
+            }}
+          >
             <PaperPlaneRight size={24} color="#000000" weight="thin" />
-          </TouchableOpacity>
+          </Button>
         </View>
       </View>
     </SafeAreaView>

@@ -1,8 +1,9 @@
 
 import React from 'react';
-import { View, Text, FlatList, TouchableOpacity } from 'react-native';
+import { FlatList } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
+import { View, Text, Card, TouchableOpacity } from 'react-native-ui-lib';
 import { Users, Clock } from 'phosphor-react-native';
 
 interface Room {
@@ -16,23 +17,23 @@ interface Room {
 const mockRooms: Room[] = [
   {
     id: '1',
-    name: 'Exam Prep',
-    description: 'Study group for upcoming exams',
+    name: 'Property Analysis',
+    description: 'Discuss market analysis and property valuations',
     memberCount: 24,
-    lastActivity: '2 min ago',
+    lastActivity: '2 minutes ago',
   },
   {
     id: '2',
-    name: 'Market Analysis',
-    description: 'Discuss current market trends',
+    name: 'Exam Prep',
+    description: 'Study group for upcoming licensing exams',
     memberCount: 18,
-    lastActivity: '15 min ago',
+    lastActivity: '15 minutes ago',
   },
   {
     id: '3',
     name: 'Networking',
-    description: 'Connect with industry professionals',
-    memberCount: 31,
+    description: 'Connect with fellow students and professionals',
+    memberCount: 32,
     lastActivity: '1 hour ago',
   },
 ];
@@ -41,41 +42,55 @@ export default function RoomsScreen() {
   const router = useRouter();
 
   const renderRoom = ({ item }: { item: Room }) => (
-    <TouchableOpacity
-      className="mx-6 mb-4 bg-separator rounded-lg p-4"
-      onPress={() => router.push(`/rooms/${item.id}`)}
-    >
-      <Text className="font-poppins-semibold text-black text-lg mb-2">
-        {item.name}
-      </Text>
-      <Text className="font-poppins-regular text-black text-sm mb-3">
-        {item.description}
-      </Text>
-      <View className="flex-row justify-between items-center">
-        <View className="flex-row items-center">
-          <Users size={16} color="#000000" weight="thin" />
-          <Text className="font-poppins-light text-black text-xs ml-1">
-            {item.memberCount} members
+    <View marginH-page marginB-card>
+      <TouchableOpacity 
+        onPress={() => router.push(`/rooms/${item.id}`)}
+        activeOpacity={0.7}
+      >
+        <Card 
+          padding-card 
+          backgroundColor-background
+          style={{ 
+            borderRadius: 12,
+            borderWidth: 1,
+            borderColor: '#F5F5F5',
+          }}
+        >
+          <Text subheading color-textPrimary marginB-section>
+            {item.name}
           </Text>
-        </View>
-        <View className="flex-row items-center">
-          <Clock size={16} color="#000000" weight="thin" />
-          <Text className="font-poppins-light text-black text-xs ml-1">
-            {item.lastActivity}
+          <Text body color-textSecondary marginB-card>
+            {item.description}
           </Text>
-        </View>
-      </View>
-    </TouchableOpacity>
+          
+          <View row spread centerV>
+            <View row centerV>
+              <Users size={16} color="#666666" weight="thin" />
+              <Text caption color-textSecondary marginL-section>
+                {item.memberCount} members
+              </Text>
+            </View>
+            
+            <View row centerV>
+              <Clock size={16} color="#666666" weight="thin" />
+              <Text caption color-textSecondary marginL-section>
+                {item.lastActivity}
+              </Text>
+            </View>
+          </View>
+        </Card>
+      </TouchableOpacity>
+    </View>
   );
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <View className="px-6 py-4 border-b border-separator">
-        <Text className="text-2xl font-poppins-semibold text-black">
-          Chat Rooms
+      <View paddingH-page paddingV-card style={{ borderBottomWidth: 1, borderBottomColor: '#F5F5F5' }}>
+        <Text heading color-textPrimary>
+          Study Rooms
         </Text>
-        <Text className="text-sm font-poppins-light text-black mt-1">
-          Join topic-specific discussions
+        <Text caption color-textSecondary marginT-section>
+          Join topic-focused discussions
         </Text>
       </View>
 
@@ -84,6 +99,7 @@ export default function RoomsScreen() {
         renderItem={renderRoom}
         keyExtractor={(item) => item.id}
         contentContainerStyle={{ paddingTop: 16 }}
+        showsVerticalScrollIndicator={false}
       />
     </SafeAreaView>
   );
