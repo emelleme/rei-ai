@@ -10,11 +10,13 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { useDatabase } from '@/hooks/useDatabase';
 
 const queryClient = new QueryClient();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  const { initialized, error } = useDatabase();
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
     Poppins_300Light: require('@expo/google-fonts/poppins/Poppins_300Light.ttf'),
